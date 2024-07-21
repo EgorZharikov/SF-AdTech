@@ -23,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role_id',
+        'wallet_id',
     ];
 
     /**
@@ -51,5 +52,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class, 'user_id', 'id');
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'user_id', 'id');
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'wallet_id', 'id');
     }
 }
