@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
     use HasFactory;
+
+    protected $guarded = false;
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class, 'topic_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'offer_id', 'id');
+    }
 }
