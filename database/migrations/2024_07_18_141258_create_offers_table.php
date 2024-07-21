@@ -15,18 +15,19 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->string('url')->nullable(false)->nullable(false);
-            $table->decimal('price')->nullable(false);
+            $table->decimal('award')->nullable(false);
             $table->text('content')->nullable(false);
-            $table->text('image')->nullable(false);
+            $table->text('preview_image')->nullable(false);
             $table->unsignedBigInteger('topic_id');
             $table->unsignedBigInteger('user_id');
             $table->boolean('status')->default(true);
-            
+            $table->timestamps();
+
             $table->index('topic_id', 'offer_topic_idx');
             $table->index('user_id', 'offer_user_idx');
-            
-            $table->foreign('topic_id')->references('id')->on('topics')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+
+            $table->foreign('topic_id', 'offer_topic_fk')->references('id')->on('topics')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id', 'offer_user_fk')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
