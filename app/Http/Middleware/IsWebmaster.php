@@ -19,6 +19,6 @@ class isWebmaster
         if (Auth::user() &&  Auth::user()->role_id === 2) {
             return $next($request);
         }
-        return redirect()->route('offer.index')->with('error', 'youre not an webmaster');
+        return back()->withErrors(['error' => 'youre not an webmaster']);
     }
 }
