@@ -17,9 +17,9 @@ class SubscriptionController extends Controller
 
     public function store(Offer $offer)
     {
-        $isSubscribed = Subscription::find(Auth::id())->user_id()->where('offer_id', $offer->id);
+        $isSubscribed = Subscription::where('user_id', Auth::id())->where('offer_id', $offer->id)->first();
         if($isSubscribed) {
-            return redirect()->route('offer.show', $offer->id)->with('error', 'you already subscribe');
+            return redirect()->route('offer.show', $offer->id)->withErrors(['error' => 'you already subscribe']);
         } else {
             Subscription::create([
                 'user_id' => Auth::id(),
