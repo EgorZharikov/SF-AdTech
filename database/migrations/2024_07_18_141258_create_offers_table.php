@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('topic_id');
             $table->unsignedBigInteger('user_id');
             $table->boolean('status')->default(true);
+            $table->boolean('unique_ip');
             $table->timestamps();
 
             $table->index('topic_id', 'offer_topic_idx');
