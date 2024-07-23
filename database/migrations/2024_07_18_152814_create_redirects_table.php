@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('subscription_id');
             $table->unsignedBigInteger('fee_id');
+            $table->integer('ip')->unsigned();
+            $table->boolean('status');
             $table->timestamps();
 
             $table->index('subscription_id', 'redirect_subscription_idx');
