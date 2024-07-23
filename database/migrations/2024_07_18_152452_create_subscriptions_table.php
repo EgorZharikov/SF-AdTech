@@ -16,11 +16,12 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('offer_id');
             $table->string('referal_link')->unique();
-            $table->boolean('status')->default(true);
+            // $table->boolean('status')->default(true);
             $table->timestamps();
 
             $table->index('user_id', 'subscription_user_idx');
             $table->index('offer_id', 'subscription_offer_idx');
+            $table->index('referal_link', 'referal_link_idx');
 
             $table->foreign('user_id', 'subscription_user_fk')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('offer_id', 'subscription_offer_fk')->references('id')->on('offers')->cascadeOnDelete();
