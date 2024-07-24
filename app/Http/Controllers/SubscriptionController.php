@@ -25,7 +25,7 @@ class SubscriptionController extends Controller
                 'user_id' => Auth::id(),
                 'offer_id' => $offer->id,
                 'referal_link' => Str::random(36),
-                'status' => true,
+                // 'status' => true,
             ]);
             return redirect()->route('offer.index');
         }
