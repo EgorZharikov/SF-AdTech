@@ -55,7 +55,6 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role_id' => ['required'],
-            'wallet_id' => ['nullable'],
         ]);
     }
 
@@ -70,17 +69,17 @@ class RegisterController extends Controller
         try {
         DB::beginTransaction();
 
-        $wallet = Wallet::create([
-            'balance' => 0
-        ]);
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role_id' => $data['role_id'],
-            'wallet_id' => $wallet->id,
         ]);
+
+            $wallet = Wallet::create([
+                'balance' => 0,
+                'user_id' => $user->id,
+            ]);
 
         DB::commit();
 
