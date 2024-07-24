@@ -11,6 +11,10 @@ class RedirectController extends Controller
 {
     public function redirect($referal_link, Request $request)
     {
+        
+        $advertiserWalletId = Subscription::where('referal_link', $referal_link)->with('user')->first()
+        ->user->with('wallet')->first()->wallet->id;
+        dd($advertiserWalletId);
         $subscription = Subscription::where('referal_link', $referal_link)->with('offer')->first();
         $offerStatus = $subscription->offer->status;
         $uniqueIpOnly = $subscription->offer->unique_ip;
