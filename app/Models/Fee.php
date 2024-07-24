@@ -11,7 +11,7 @@ class Fee extends Model
 
     protected $guarded = false;
 
-    public function redirects() {
-        return $this->hasMany(Redirect::class, 'fee_id', 'id');
+    public function users() {
+        return $this->hasMany(User::class, 'fee_id', 'id');
     }
 }
