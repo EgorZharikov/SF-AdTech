@@ -13,6 +13,6 @@ class RedirectController extends Controller
 {
     public function redirect($referal_link, Request $request)
     {
-        return $redirector = ( new RedirectService())->process($referal_link, $request);
+        return $redirector = ( new RedirectService($referal_link, $request))->process();
     }
 }
