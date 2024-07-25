@@ -17,9 +17,21 @@ class WalletService
 
     public static function debiting(int $walletId, float $value)
     {
-        $wallet = Wallet::find($walletId);
+        $wallet = Wallet::where('id', $walletId);
         $wallet->balance = $wallet->balance - $value;
         $wallet->save();
         $wallet->refresh();
     }
+
+    public static function checkBalance(int $wallet_id, float $limit) 
+    {
+        $wallet = Wallet::where('id', $wallet_id)->first();
+        $walletBalance = $wallet->balance;
+        if($walletBalance > $limit){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
