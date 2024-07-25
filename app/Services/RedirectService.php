@@ -15,46 +15,59 @@ use Illuminate\Support\Facades\DB;
 
 class RedirectService
 {
+    private $subscription, $offer, $webmaster, $webmasterWalletId,
+        $advertiser, $advertiserWalletId, $request, $referal_link;
 
-    public function process($referal_link, $request)
+    public function __construct($referal_link, $request)
     {
-        $subscription = Subscription::where('referal_link', $referal_link)->with('offer')->first();
-        $offerStatus = $subscription->offer->status;
-        $redirectUrl = $subscription->offer->url;
-        $uniqueIpOnly = $subscription->offer->unique_ip;
-        $clientIp = ip2long($request->getClientIp());
-        $data = ['subscription_id' => $subscription->id, 'ip' => $clientIp];
-        $isUniqueIp = Redirect::where('ip', $clientIp)->doesntExist();
+        $this->$referal_link = $referal_link;
+        $this->request = $request;
+        $this->subscription = Subscription::where('referal_link', $referal_link);
+        $this->offer = $this->subscription->with('offer')->first()->offer;
+        $this->webmaster = $this->subscription->with('user.wallet')->first();
+        $this->advertiser = $this->subscription->with('offer.user.wallet')->first();
+        $this->webmasterWalletId = $this->webmaster->user->wallet->id;
+        $this->advertiserWalletId = $this->advertiser->offer->user->wallet->id;
+    }
+    public function process()
+    {
+        WalletService::checkBalance($this->advertiserWalletId, $this->offer->award) ?:
+            OfferService::disabled($this->offer->id);
+            $this->offer->refresh();
+
+        $subscriptionId = $this->subscription->first()->id;
+        $offerStatus = $this->offer->status;
+        $redirectUrl = $this->offer->url;
+        $uniqueIpOnly = $this->offer->unique_ip;
+        $clientIp = ip2long($this->request->getClientIp());
+        $data = ['subscription_id' => $subscriptionId, 'ip' => $clientIp];
+        $isUniqueIp = Redirect::where('ip', $clientIp)->where('subscription_id', $subscriptionId)->doesntExist();
+        
 
         if ($offerStatus) {
             if ($uniqueIpOnly) {
                 if ($isUniqueIp) {
-                    $this->store($data, true, $referal_link);
-                     return redirect()->away($redirectUrl);
+                    $this->store($data, true, $this->referal_link);
+                    return redirect()->away($redirectUrl);
                 } else {
-                    $this->store($data, false, $referal_link);
-                     return abort(404);
+                    $this->store($data, false, $this->referal_link);
+                    return abort(404);
                 }
             } else {
-                $this->store($data, true, $referal_link);
+                $this->store($data, true, $this->referal_link);
                 return redirect()->away($redirectUrl);
             }
         } else {
-            $this->store($data, false, $referal_link);
+            $this->store($data, false, $this->referal_link);
             return abort(404);
         }
     }
 
     private function store(array $data, bool $status, $referal_link)
     {
-        $subscription = Subscription::where('referal_link', $referal_link)->with('user.wallet')->first();
-        $webmasterWalletId = $subscription->user->wallet->id;
-        $offer = Offer::find($subscription->offer_id)->with('user.wallet')->first();
-        $advertiserWalletId = $offer->user->wallet->id;
-        $systemWallet1Id = Wallet::where('system_code', 101)->first()->id;
         $systemWallet2Id = Wallet::where('system_code', 102)->first()->id;
-        $offerAward = $offer->award;
-        $fee = Fee::find($subscription->user->fee_id)->percent;
+        $offerAward = $this->offer->award;
+        $fee = Fee::find($this->webmaster->user->fee_id)->percent;
         $systemProfit = $offerAward * ($fee / 100);
         $webmasterProfit = $offerAward - $systemProfit;
         $hash = Str::random(36);
@@ -63,12 +76,12 @@ class RedirectService
             DB::beginTransaction();
 
             if ($status) {
-                WalletService::debiting($advertiserWalletId, $offerAward);
-                TransactionService::store($advertiserWalletId, 'debiting_offer_award', $offerAward, $hash);
-                WalletService::replenishment($webmasterWalletId, $webmasterProfit);
-                TransactionService::store($webmasterWalletId, 'replenishment_offer_award', $offerAward, $hash);
+                WalletService::debiting($this->advertiserWalletId, $offerAward);
+                TransactionService::store($this->advertiserWalletId, 'debiting_offer_award', $offerAward, $hash);
+                WalletService::replenishment($this->webmasterWalletId, $webmasterProfit);
+                TransactionService::store($this->webmasterWalletId, 'replenishment_offer_award', $webmasterProfit, $hash);
                 WalletService::replenishment($systemWallet2Id, $systemProfit);
-                TransactionService::store($systemWallet2Id, 'replenishment_fee', $offerAward, $hash);
+                TransactionService::store($systemWallet2Id, 'replenishment_fee', $systemProfit, $hash);
             }
             Redirect::create([
                 'subscription_id' => $data['subscription_id'],
