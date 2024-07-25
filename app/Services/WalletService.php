@@ -6,11 +6,20 @@ use App\Models\Wallet;
 
 class WalletService
 {
-    public static function update($walletId, $balance)
+    public static function replenishment(int $walletId, float $value)
     {
         $wallet = Wallet::find($walletId);
-        $wallet->balance = $balance;
+        $wallet->balance = $wallet->balance + $value;
         $wallet->save();
+        $wallet->refresh();
 
+    }
+
+    public static function debiting(int $walletId, float $value)
+    {
+        $wallet = Wallet::find($walletId);
+        $wallet->balance = $wallet->balance - $value;
+        $wallet->save();
+        $wallet->refresh();
     }
 }
