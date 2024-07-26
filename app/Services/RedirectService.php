@@ -16,13 +16,13 @@ use Illuminate\Support\Facades\DB;
 class RedirectService
 {
     private $subscription, $offer, $webmaster, $webmasterWalletId,
-        $advertiser, $advertiserWalletId, $request, $referal_link;
+        $advertiser, $advertiserWalletId, $request, $referalLink;
 
-    public function __construct($referal_link, $request)
+    public function __construct($referalLink, $request)
     {
-        $this->$referal_link = $referal_link;
+        $this->$referalLink = $referalLink;
         $this->request = $request;
-        $this->subscription = Subscription::where('referal_link', $referal_link);
+        $this->subscription = Subscription::where('referal_link', $referalLink);
         $this->offer = $this->subscription->with('offer')->first()->offer;
         $this->webmaster = $this->subscription->with('user.wallet')->first();
         $this->advertiser = $this->subscription->with('offer.user.wallet')->first();
@@ -32,38 +32,38 @@ class RedirectService
     public function process()
     {
         WalletService::checkBalance($this->advertiserWalletId, $this->offer->award) ?:
-            OfferService::disabled($this->offer->id);
-            $this->offer->refresh();
+            OfferService::statusChange($this->offer->id);
+        $this->offer->refresh();
 
         $subscriptionId = $this->subscription->first()->id;
-        $offerStatus = $this->offer->status;
         $redirectUrl = $this->offer->url;
         $uniqueIpOnly = $this->offer->unique_ip;
         $clientIp = ip2long($this->request->getClientIp());
         $data = ['subscription_id' => $subscriptionId, 'ip' => $clientIp];
         $isUniqueIp = Redirect::where('ip', $clientIp)->where('subscription_id', $subscriptionId)->doesntExist();
-        
 
+        $offerStatus = ($this->offer->status) === 1 ? true : false;
+        
         if ($offerStatus) {
             if ($uniqueIpOnly) {
                 if ($isUniqueIp) {
-                    $this->store($data, true, $this->referal_link);
+                    $this->store($data, true);
                     return redirect()->away($redirectUrl);
                 } else {
-                    $this->store($data, false, $this->referal_link);
+                    $this->store($data, false);
                     return abort(404);
                 }
             } else {
-                $this->store($data, true, $this->referal_link);
+                $this->store($data, true);
                 return redirect()->away($redirectUrl);
             }
         } else {
-            $this->store($data, false, $this->referal_link);
+            $this->store($data, false);
             return abort(404);
         }
     }
 
-    private function store(array $data, bool $status, $referal_link)
+    private function store(array $data, bool $status)
     {
         $systemWallet2Id = Wallet::where('system_code', 102)->first()->id;
         $offerAward = $this->offer->award;
