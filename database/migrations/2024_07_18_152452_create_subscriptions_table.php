@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('referal_link')->unique();
             // $table->boolean('status')->default(true);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('user_id', 'subscription_user_idx');
             $table->index('offer_id', 'subscription_offer_idx');

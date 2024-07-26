@@ -20,9 +20,10 @@ return new class extends Migration
             $table->text('preview_image')->nullable(false);
             $table->unsignedBigInteger('topic_id');
             $table->unsignedBigInteger('user_id');
-            $table->boolean('status')->default(true);
+            $table->integer('status')->default(1);
             $table->boolean('unique_ip')->default(true);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('topic_id', 'offer_topic_idx');
             $table->index('user_id', 'offer_user_idx');

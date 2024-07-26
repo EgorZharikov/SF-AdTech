@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
             $table->char('name')->unique();
+            $table->softDeletes();
         });
     }
 
