@@ -10,4 +10,9 @@ class DashboardController extends Controller
     {
         return view('dashboard.profile');
     }
+
+    public function webmaster()
+    {
+        return view('dashboard.webmaster');
+    }
 }
