@@ -16,24 +16,33 @@ class SubscriptionController extends Controller
     }
 
     public function store(Offer $offer)
-    {
-        $isSubscribed = Subscription::where('user_id', Auth::id())->where('offer_id', $offer->id)->exists();
+    {   $subscription = Subscription::where('user_id', Auth::id())->where('offer_id', $offer->id);
+        $isSubscribed = $subscription->exists();
+        $isRemoved = Subscription::withTrashed()->where('user_id', Auth::id())->where('offer_id', $offer->id)->exists();
+
         if($isSubscribed) {
             return redirect()->route('offer.show', $offer->id)->withErrors(['error' => 'you already subscribe']);
+        } elseif ($isRemoved) {
+            Subscription::withTrashed()->where('user_id', Auth::id())->where('offer_id', $offer->id)->restore();
+            return redirect()->route('offer.index');
         } else {
             Subscription::create([
                 'user_id' => Auth::id(),
                 'offer_id' => $offer->id,
                 'referal_link' => Str::random(36),
-                // 'status' => true,
+                // 'status' => 1,
             ]);
             return redirect()->route('offer.index');
         }
         
     }
 
-    public function show()
+    public function destroy(Offer $offer)
     {
-        
+        $Subscription = Subscription::where('user_id', Auth::id())->where('offer_id', $offer->id)->first();
+        $Subscription->delete();
+        return redirect()->route('offer.index');
     }
+
+
 }
