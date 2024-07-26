@@ -7,10 +7,10 @@ use App\Models\Offer;
 
 class OfferService
 {
-    public static function disabled(int $offerId)
+    public static function statusChange(int $offerId)
     {
         $offer = Offer::find($offerId)->first();
-        $offer->status = 0;
+        $offer->status = 2;
         $offer->save();
         $offer->refresh();
     }
