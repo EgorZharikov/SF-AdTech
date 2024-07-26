@@ -17,7 +17,7 @@ class WalletService
 
     public static function debiting(int $walletId, float $value)
     {
-        $wallet = Wallet::where('id', $walletId);
+        $wallet = Wallet::where('id', $walletId)->first();
         $wallet->balance = $wallet->balance - $value;
         $wallet->save();
         $wallet->refresh();
