@@ -46,13 +46,13 @@
                 </ul> <!--end::End Navbar Links-->
             </div> <!--end::Container-->
         </nav> <!--end::Header--> <!--begin::Sidebar-->
-        @include('includes.dashboard.sidebar')
+        @yield('sidebar')
         <main class="app-main"> <!--begin::App Content Header-->
             <div class="app-content-header"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Dashboard</h3>
+                            @yield('title')
                         </div>
                     </div> <!--end::Row-->
                 </div> <!--end::Container-->
