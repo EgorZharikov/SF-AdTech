@@ -23,7 +23,7 @@ class Subscription extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function redirect()
+    public function redirects()
     {
         return $this->hasMany(Redirect::class, 'subscription_id', 'id');
     }
