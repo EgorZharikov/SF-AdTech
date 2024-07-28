@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdvertiserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\WebmasterController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/offers', [OfferController::class, 'index'])->name('offer.index');
@@ -20,4 +22,13 @@ Route::get('/redirect/{referal_link}', [RedirectController::class, 'redirect'])-
 Auth::routes(['verify' => true]);
 // Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscription.store');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified')->name('dashboard');
-Route::get('/dashboard/webmaster', [DashboardController::class, 'webmaster'])->middleware('verified')->name('dashboard.webmaster');
+Route::get('/webmaster/profile', [WebmasterController::class, 'profile'])->middleware('verified')->name('dashboard.webmaster.profile');
+Route::get('/webmaster/subscriptions', [WebmasterController::class, 'subscriptions'])->middleware('verified')->name('dashboard.webmaster.subscriptions');
+Route::get('/webmaster/statistics', [WebmasterController::class, 'statistics'])->middleware('verified')->name('dashboard.webmaster.statistics');
+Route::get('/webmaster/wallet', [WebmasterController::class, 'wallet'])->middleware('verified')->name('dashboard.webmaster.wallet');
+
+Route::get('/advertiser/profile', [AdvertiserController::class, 'profile'])->middleware('verified')->name('dashboard.advertiser.profile');
+Route::get('/advertiser/offers', [AdvertiserController::class, 'offers'])->middleware('verified')->name('dashboard.advertiser.offers');
+Route::get('/advertiser/statistics', [AdvertiserController::class, 'statistics'])->middleware('verified')->name('dashboard.advertiser.statistics');
+Route::get('/advertiser/wallet', [AdvertiserController::class, 'profile'])->middleware('verified')->name('dashboard.advertiser.wallet');
+
