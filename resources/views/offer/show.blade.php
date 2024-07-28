@@ -32,7 +32,7 @@
                 </form>
                 <form method="post" action="{{ route('offer.subscription.destroy', $offer->id) }}">
                     @csrf
-                    @method('delete');
+                    @method('delete')
                     <input type="hidden" name="offer_id" value="{{ $offer->id }}">
                     <button type=submit" class="btn btn btn-dark btn-lg px-4">Unsubscribe</button>
                 </form>
