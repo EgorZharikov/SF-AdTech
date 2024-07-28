@@ -14,4 +14,9 @@ class Fee extends Model
     public function users() {
         return $this->hasMany(User::class, 'fee_id', 'id');
     }
+
+    public function redirects()
+    {
+        return $this->hasMany(Fee::class, 'fee_id', 'id');
+    }
 }
