@@ -51,7 +51,7 @@ class RedirectService
                     return redirect()->away($redirectUrl);
                 } else {
                     $this->store($data, false);
-                    return abort(404);
+                    return redirect()->away($redirectUrl);
                 }
             } else {
                 $this->store($data, true);
@@ -87,6 +87,7 @@ class RedirectService
                 'subscription_id' => $data['subscription_id'],
                 'ip' => $data['ip'],
                 'status' => $status,
+                'fee_id' => $this->webmaster->user->fee_id,
             ]);
 
             DB::commit();
