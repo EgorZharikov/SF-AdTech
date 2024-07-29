@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middleware\checkWalletBalance;
+use App\Http\Middleware\Dashboard;
+use App\Http\Middleware\IsAdministrator;
+use App\Http\Middleware\IsAdvertiser;
 use App\Http\Middleware\IsWebmaster;
 use App\Http\Middleware\Subscribed;
 use Illuminate\Foundation\Application;
@@ -16,8 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'webmaster' => IsWebmaster::class,
+            'advertiser' => IsAdvertiser::class,
+            'administrator' => IsAdministrator::class,
             'subscribed' => Subscribed::class,
             'checkWalletBalance' => checkWalletBalance::class,
+            'dashboard' => Dashboard::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
