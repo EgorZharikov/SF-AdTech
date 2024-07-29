@@ -27,4 +27,5 @@ class Subscription extends Model
     {
         return $this->hasMany(Redirect::class, 'subscription_id', 'id');
     }
+    
 }
