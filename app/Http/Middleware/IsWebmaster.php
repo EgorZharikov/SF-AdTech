@@ -19,6 +19,6 @@ class isWebmaster
         if (Auth::user() &&  Auth::user()->role_id === 2) {
             return $next($request);
         }
-        return back()->withErrors(['error' => 'youre not an webmaster']);
+        return abort(404);
     }
 }
