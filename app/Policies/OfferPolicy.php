@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Offer;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -16,12 +17,24 @@ class OfferPolicy
         //
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Offer $offer): bool
     {
         //
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function subscribe(User $user, Offer $offer): bool
+    {
+        $unsubscribed = Subscription::where('offer_id', $offer->id)->where('user_id', $user->id)->doesntExist(); 
+        return $user->role_id == 2 && $unsubscribed;
+    }
+
+    public function unsubscribe(User $user, Offer $offer): bool
+    {
+        $subscribed = Subscription::where('offer_id', $offer->id)->where('user_id', $user->id)->exists();
+        return $user->role_id == 2 && $subscribed;
     }
 
     /**
@@ -37,7 +50,12 @@ class OfferPolicy
      */
     public function update(User $user, Offer $offer): bool
     {
-        //
+        return $offer->user_id === $user->id;
+    }
+    
+    public function unpublish(User $user, Offer $offer): bool
+    {
+        return $offer->user_id === $user->id && $offer->status === 1;
     }
 
     /**
