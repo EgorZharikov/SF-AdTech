@@ -25,7 +25,7 @@ class OfferController extends Controller
 
     public function store()
     {
-        
+
 
         $data = request()->validate([
             'title' => '',
@@ -37,13 +37,10 @@ class OfferController extends Controller
             'uniqueIp' => '',
         ]);
 
-
-
-        $data['preview_image'] = Storage::put('/previews', $data['preview_image']);
-
         try {
 
             DB::beginTransaction();
+            $data['preview_image'] = Storage::put('/previews', $data['preview_image']);
 
             $topic = Topic::firstOrCreate([
                 'name' => $data['topic'],
@@ -61,6 +58,8 @@ class OfferController extends Controller
             ]);
 
             DB::commit();
+
+            return redirect()->route('offer.index');
         } catch (\Exception $exception) {
             DB::rollBack();
             return $exception->getMessage();
@@ -70,5 +69,66 @@ class OfferController extends Controller
     public function show(Offer $offer)
     {
         return view('offer.show', compact('offer'));
+    }
+
+    public function update(Request $request, Offer $offer)
+    {
+        $data = request()->validate([
+            'title' => '',
+            'url' => '',
+            'award' => '',
+            'content' => '',
+            'topic' => '',
+            'preview_image' => ['required', 'image'],
+            'uniqueIp' => '',
+        ]);
+
+
+
+
+        try {
+            DB::beginTransaction();
+            Storage::delete($offer->preview_image);
+            $data['preview_image'] = Storage::put('/previews', $data['preview_image']);
+
+            $topic = Topic::firstOrCreate([
+                'name' => $data['topic'],
+            ]);
+
+            $offer->update([
+                'title' => $data['title'],
+                'url' => $data['url'],
+                'award' => $data['award'],
+                'content' => $data['content'],
+                'preview_image' => $data['preview_image'],
+                'topic_id' => $topic->id,
+                'user_id' => Auth::id(),
+                'unique_ip' => $data['uniqueIp']
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('offer.index');
+            
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $exception->getMessage();
+        }
+    }
+
+    public function edit(Offer $offer)
+    {
+        $topic = Topic::where('id', $offer->topic_id)->first();
+        $wallet = Wallet::where('user_id', Auth::id())->first();
+        return view('offer.edit', compact('wallet', 'offer', 'topic'));
+    }
+
+    public function unpublish(Offer $offer)
+    {
+        $offer->status = 0;
+        $offer->save();
+        $offer->refresh();
+
+        return redirect()->route('offer.index');
     }
 }
