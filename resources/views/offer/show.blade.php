@@ -26,17 +26,31 @@
                 @endif
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
-                
+                @can('subscribe', $offer)
                 <form method="post" action="{{ route('offer.subscription.store', $offer->id) }}">
                     @csrf
                     <button type="submit" class="btn btn-success btn-lg px-4 me-md-2 fw-bold">Subscribe</button>
                 </form>
+                @endcan
+                 @can('unsubscribe', $offer)
                 <form method="post" action="{{ route('offer.subscription.destroy', $offer->id) }}">
                     @csrf
                     @method('delete')
                     <input type="hidden" name="offer_id" value="{{ $offer->id }}">
                     <button type=submit" class="btn btn btn-dark btn-lg px-4">Unsubscribe</button>
                 </form>
+                @endcan
+                @can('update', $offer)
+                    <a href="{{ route('offer.edit', $offer->id) }}" class="btn btn-primary btn-lg px-4 me-3">Edit</a>
+                @endcan
+                @can('unpublish', $offer)
+                <form method="post" action="{{ route('offer.unpublish', $offer->id) }}">
+                    @csrf
+                    @method('patch')
+                    <button type=submit" class="btn btn btn-dark btn-lg px-4">Unpublish</button>
+                </form>
+                @endcan
+                
             </div>
         </div>
         <div class="col-lg-3 offset-lg-1 p-0 overflow-hidden shadow-lg">
