@@ -13,7 +13,7 @@ use App\Http\Controllers\WebmasterController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/offers', [OfferController::class, 'index'])->name('offer.index');
 Route::get('/offers/create', [OfferController::class, 'create'])->name('offer.create');
-Route::post('/offers', [OfferController::class, 'store'])->name('offer.store');
+Route::post('/offers', [OfferController::class, 'store'])->middleware('checkWalletBalance')->name('offer.store');
 Route::get('/offers/{offer}', [OfferController::class, 'show'])->name('offer.show');
 Route::post('/offers/{offer}/subscriptions', [SubscriptionController::class, 'store'])->middleware('webmaster')->name('offer.subscription.store');
 Route::delete('/offers/{offer}/subscriptions', [SubscriptionController::class, 'destroy'])->middleware('webmaster')->name('offer.subscription.destroy');
@@ -30,5 +30,5 @@ Route::get('/webmaster/wallet', [WebmasterController::class, 'wallet'])->middlew
 Route::get('/advertiser/profile', [AdvertiserController::class, 'profile'])->middleware('verified')->name('dashboard.advertiser.profile');
 Route::get('/advertiser/offers', [AdvertiserController::class, 'offers'])->middleware('verified')->name('dashboard.advertiser.offers');
 Route::get('/advertiser/statistics', [AdvertiserController::class, 'statistics'])->middleware('verified')->name('dashboard.advertiser.statistics');
-Route::get('/advertiser/wallet', [AdvertiserController::class, 'profile'])->middleware('verified')->name('dashboard.advertiser.wallet');
+Route::get('/advertiser/wallet', [AdvertiserController::class, 'wallet'])->middleware('verified')->name('dashboard.advertiser.wallet');
 

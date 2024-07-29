@@ -26,6 +26,7 @@
                 @endif
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+                
                 <form method="post" action="{{ route('offer.subscription.store', $offer->id) }}">
                     @csrf
                     <button type="submit" class="btn btn-success btn-lg px-4 me-md-2 fw-bold">Subscribe</button>

@@ -14,7 +14,7 @@
                 <div class="col-sm-3 m-3">
                     <div class="card" style="width: 20rem;">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item text-success">Balance: {{$wallet->balance}} ₽
+                            <li class="list-group-item text-success"><h3>Balance: {{$wallet->balance}} ₽</h3>
                             </li>
                         </ul>
                         <div class="card-body d-flex justify-content-center">

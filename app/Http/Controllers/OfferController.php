@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Offer;
 use App\Models\Topic;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +19,14 @@ class OfferController extends Controller
 
     public function create()
     {
-        return view('offer.create');
+        $wallet = Wallet::where('user_id', Auth::id())->first();
+        return view('offer.create', compact('wallet'));
     }
 
     public function store()
     {
+        
+
         $data = request()->validate([
             'title' => '',
             'url' => '',
@@ -30,7 +34,10 @@ class OfferController extends Controller
             'content' => '',
             'topic' => '',
             'preview_image' => ['required', 'image'],
+            'uniqueIp' => '',
         ]);
+
+
 
         $data['preview_image'] = Storage::put('/previews', $data['preview_image']);
 
@@ -38,7 +45,7 @@ class OfferController extends Controller
 
             DB::beginTransaction();
 
-            $topic = Topic::create([
+            $topic = Topic::firstOrCreate([
                 'name' => $data['topic'],
             ]);
 
@@ -50,6 +57,7 @@ class OfferController extends Controller
                 'preview_image' => $data['preview_image'],
                 'topic_id' => $topic->id,
                 'user_id' => Auth::id(),
+                'unique_ip' => $data['uniqueIp']
             ]);
 
             DB::commit();

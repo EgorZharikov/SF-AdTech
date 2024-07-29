@@ -25,22 +25,24 @@ class WebmasterController extends Controller
 
     public function statistics()
     {
-        $subscriptions = Subscription::where('user_id', Auth::id())->with('redirect')->get();
+        $subscriptions = Subscription::where('user_id', Auth::id())->with('redirects')->get();
         $statistics = [];
+        $total = 0;
         foreach ($subscriptions as $subscription) {
             $income = 0;
 
-            foreach ($subscription->redirect as $redirect) {
+            foreach ($subscription->redirects->where('status', 1) as $redirect) {
                 $award = $redirect->subscription->offer->award;
                 $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
                 $fee = $award * ($fee / 100);
                 $income += $award - $fee;
             }
-
-            $statistics[] = ['subscription' => $subscription->referal_link, 'redirect_count' => $subscription->redirect->count(), 'award' => $income];
+            $total += $income;
+            $statistics[] = ['subscription' => $subscription->referal_link, 'redirect_count' => $subscription->redirects->where('status', 1)->count(), 'award' => $income];
         }
+        
 
-        return view('dashboard.webmaster.statistics', compact('statistics'));
+        return view('dashboard.webmaster.statistics', compact('statistics', 'total'));
     }
 
     public function wallet()

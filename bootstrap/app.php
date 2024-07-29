@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\checkWalletBalance;
 use App\Http\Middleware\IsWebmaster;
 use App\Http\Middleware\Subscribed;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'webmaster' => IsWebmaster::class,
             'subscribed' => Subscribed::class,
+            'checkWalletBalance' => checkWalletBalance::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
