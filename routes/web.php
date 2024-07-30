@@ -8,6 +8,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WebmasterController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -23,7 +24,12 @@ Route::get('/offers/{offer}/edit', [OfferController::class, 'edit'])->name('offe
 Route::delete('/offers/{offer}/subscriptions', [SubscriptionController::class, 'destroy'])->middleware('webmaster')->name('offer.subscription.destroy');
 Route::get('/redirect/{referal_link}', [RedirectController::class, 'redirect'])->middleware('subscribed')->name('redirect');
 
+
+
+
 Auth::routes(['verify' => true]);
+
+Route::patch('/wallet', [WalletController::class, 'update'])->middleware('verified')->name('wallet.update');
 // Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscription.store');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified', 'dashboard')->name('dashboard');
 
