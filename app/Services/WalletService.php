@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\Wallet;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class WalletService
 {
@@ -34,4 +37,29 @@ class WalletService
         }
     }
 
+    public function withdraw(float $value) {
+
+        $wallet = Wallet::where('user_id', Auth::id())->first();
+        $systemWallet = Wallet::where('system_code', 101)->first();
+        $hash = Str::random(36);
+        if($wallet->balance >= $value) {
+            try {
+            DB::beginTransaction();
+            self::debiting($wallet->id, $value);
+            TransactionService::store($wallet->id, 'withdraw', $value, $hash);
+            self::debiting($systemWallet->id, $value);
+            TransactionService::store($systemWallet->id, 'withdraw_from_wallet_' . $wallet->id, $value, $hash);
+
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return $exception->getMessage();
+        }     
+    }
+}
+
+    public function replenish()
+    {
+        //
+    }
 }

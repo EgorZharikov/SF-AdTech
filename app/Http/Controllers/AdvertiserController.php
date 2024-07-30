@@ -56,4 +56,5 @@ class AdvertiserController extends Controller
         $wallet = Wallet::where('user_id', Auth::id())->first();
         return view('dashboard.advertiser.wallet', compact('wallet'));
     }
+
 }

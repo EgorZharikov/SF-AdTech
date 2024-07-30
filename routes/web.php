@@ -16,6 +16,7 @@ Route::get('/offers/create', [OfferController::class, 'create'])->name('offer.cr
 Route::post('/offers', [OfferController::class, 'store'])->middleware('checkWalletBalance')->name('offer.store');
 Route::patch('/offers/{offer}', [OfferController::class, 'update'])->middleware('checkWalletBalance')->name('offer.update');
 Route::patch('/offers/{offer}/unpublish', [OfferController::class, 'unpublish'])->middleware('advertiser')->name('offer.unpublish');
+Route::patch('/offers/{offer}/publish', [OfferController::class, 'publish'])->middleware('advertiser')->name('offer.publish');
 Route::get('/offers/{offer}', [OfferController::class, 'show'])->name('offer.show');
 Route::post('/offers/{offer}/subscriptions', [SubscriptionController::class, 'store'])->middleware('webmaster')->name('offer.subscription.store');
 Route::get('/offers/{offer}/edit', [OfferController::class, 'edit'])->name('offer.edit');

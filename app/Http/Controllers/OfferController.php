@@ -14,7 +14,7 @@ class OfferController extends Controller
 {
     public function index(Offer $offer)
     {
-        return view('offer.index', ['offers' => Offer::with('topic')->get()]);
+        return view('offer.index', ['offers' => Offer::with('topic')->where('status' , 1)->get()]);
     }
 
     public function create()
@@ -108,7 +108,7 @@ class OfferController extends Controller
 
             DB::commit();
 
-            return redirect()->route('offer.index');
+            return redirect()->route('offer.show', $offer->id);
             
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -129,6 +129,15 @@ class OfferController extends Controller
         $offer->save();
         $offer->refresh();
 
-        return redirect()->route('offer.index');
+        return redirect()->route('offer.show', $offer->id);
+    }
+
+    public function publish(Offer $offer)
+    {
+        $offer->status = 1;
+        $offer->save();
+        $offer->refresh();
+
+        return redirect()->route('offer.show', $offer->id);
     }
 }
