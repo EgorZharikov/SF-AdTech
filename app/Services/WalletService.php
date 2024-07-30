@@ -15,7 +15,6 @@ class WalletService
         $wallet->balance = $wallet->balance + $value;
         $wallet->save();
         $wallet->refresh();
-
     }
 
     public static function debiting(int $walletId, float $value)
@@ -26,40 +25,61 @@ class WalletService
         $wallet->refresh();
     }
 
-    public static function checkBalance(int $wallet_id, float $limit) 
+    public static function checkBalance(int $wallet_id, float $limit)
     {
         $wallet = Wallet::where('id', $wallet_id)->first();
         $walletBalance = $wallet->balance;
-        if($walletBalance > $limit){
+        if ($walletBalance > $limit) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function withdraw(float $value) {
-
+    public static function withdraw(float $value)
+    {
         $wallet = Wallet::where('user_id', Auth::id())->first();
         $systemWallet = Wallet::where('system_code', 101)->first();
         $hash = Str::random(36);
-        if($wallet->balance >= $value) {
+        if ($wallet->balance >= $value) {
             try {
+                DB::beginTransaction();
+                self::debiting($wallet->id, $value);
+                TransactionService::store($wallet->id, 'withdraw', $value, $hash);
+                self::debiting($systemWallet->id, $value);
+                TransactionService::store($systemWallet->id, 'withdraw_from_wallet_' . $wallet->id, $value, $hash);
+
+                DB::commit();
+                return redirect()->back();
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                return $exception->getMessage();
+            }
+        } else {
+           return back()->withErrors(['walletError' => 'Insufficient funds!']);
+        }
+    }
+
+    public static function replenish(float $value)
+    {
+        $wallet = Wallet::where('user_id', Auth::id())->first();
+        $systemWallet = Wallet::where('system_code', 101)->first();
+
+        $hash = Str::random(36);
+
+        try {
             DB::beginTransaction();
-            self::debiting($wallet->id, $value);
-            TransactionService::store($wallet->id, 'withdraw', $value, $hash);
-            self::debiting($systemWallet->id, $value);
-            TransactionService::store($systemWallet->id, 'withdraw_from_wallet_' . $wallet->id, $value, $hash);
+            self::replenishment($wallet->id, $value);
+            TransactionService::store($wallet->id, 'replenish', $value, $hash);
+            self::replenishment($systemWallet->id, $value);
+            TransactionService::store($systemWallet->id, 'replenish_wallet_' . $wallet->id, $value, $hash);
 
             DB::commit();
+
+            return redirect()->back();
         } catch (\Exception $exception) {
             DB::rollBack();
             return $exception->getMessage();
-        }     
-    }
-}
-
-    public function replenish()
-    {
-        //
+        }
     }
 }
