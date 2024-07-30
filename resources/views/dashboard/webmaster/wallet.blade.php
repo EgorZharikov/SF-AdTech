@@ -11,23 +11,36 @@
 @section('content')
     <div class="container text-center">
         <div class="row align-items-start">
-                <div class="col-sm-3 m-3">
-                    <div class="card" style="width: 20rem;">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item text-success"><h3>Balance: {{$wallet->balance}} ₽</h3>
-                            </li>
-                        </ul>
-                        <div class="card-body d-flex justify-content-center">
-                            <a href=""
-                                class="btn btn-primary me-3">Withdraw</a>
-                            <form method="post" action="">
-                                @csrf
-                                <input type="hidden" name="offer_id" value="">
-                                <button type=submit" class="btn btn-primary px-4">Replenish</button>
-                            </form>
+            <div class="col-sm-3 m-3">
+                <div class="card d-flex justify-content-center bg-dark" style="width: 20rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-bg-success">
+                            <h4>Balance: {{ $wallet->balance }} ₽</h4>
+                        </li>
+                    </ul>
+                    <form method="post" action="{{ route('wallet.update') }}">
+                        @csrf
+                        @method('patch')
+                        <div class="card-body d-flex justify-content-center" style="width: 20rem;">
+                            <input type="number" class="form-control px-5" aria-label="Amount" name="amount"
+                                value="" step="1" pattern="\d*">
                         </div>
-                    </div>
+                        <div class="card-body d-flex justify-content-center">
+                            <button type="submit" name="replenish"
+                                class="btn btn-outline-success px-4 me-4">Replenish</button>
+                            <button type="submit" name="withdraw"
+                                class="btn btn-outline-success px-4 me-4">Withdraw</button>
+                        </div>
+                    </form>
                 </div>
+            </div>
+            @if($errors->has('walletError'))
+            <div class="col-sm-3 m-3">
+                <div class="alert alert-warning" role="alert">
+                    {{$errors->first()}}
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 @endsection
