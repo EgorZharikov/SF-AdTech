@@ -31,6 +31,15 @@ class AdvertiserController extends Controller
 
     public function statistics()
     {
+        if(request()->has('day')) {
+ 
+            $dateOffer = Offer::where('user_id', Auth::id())->with('subscriptions')->withTrashed()->get();
+            $test = $dateOffer->subscriptions;
+            dd($test);
+        }
+
+
+
         $offers = Offer::where('user_id', Auth::id())->with('subscriptions')->withTrashed()->get();
         $total = 0;
         $statistics = [];
