@@ -43,5 +43,6 @@ Route::get('/advertiser', [AdvertiserController::class, 'index'])->middleware('v
 Route::get('/advertiser/profile', [AdvertiserController::class, 'profile'])->middleware('verified', 'advertiser')->name('dashboard.advertiser.profile');
 Route::get('/advertiser/offers', [AdvertiserController::class, 'offers'])->middleware('verified', 'advertiser')->name('dashboard.advertiser.offers');
 Route::get('/advertiser/statistics', [AdvertiserController::class, 'statistics'])->middleware('verified', 'advertiser')->name('dashboard.advertiser.statistics');
+Route::post('/advertiser/statistics', [AdvertiserController::class, 'statistics'])->middleware('verified', 'advertiser');
 Route::get('/advertiser/wallet', [AdvertiserController::class, 'wallet'])->middleware('verified', 'advertiser')->name('dashboard.advertiser.wallet');
 
