@@ -76,15 +76,25 @@
                 </tr>
             </thead>
             <tbody>
-
+                @foreach ($dayOffers as $dayOffer )
                 <tr>
+                    <td>{{$dayOffer->id}}</td>
+                    <td>{{$dayOffer->title}}</td>
+                    <td>{{$dayOffer->subscriptions_count}}</td>
+                    <td>{{$dayOffer->subscriptions_count}}</td>
+                    <td>{{$dayOffer->redirectsCount}}</td>
+                    <td>{{$dayOffer->award}}</td>
+                    <th scope="row">{{$dayOffer->redirectsCount * $dayOffer->award}}</th>
+                </tr>
+                 @endforeach
+                  <tr>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th scope="row">Σ</th>
+                    <th scope="row">Σ {{$dayCost}}</th>
                 </tr>
             </tbody>
         </table>
