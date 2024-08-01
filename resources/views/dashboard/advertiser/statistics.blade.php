@@ -26,13 +26,13 @@
             <tbody>
                 @foreach ($statistics as $statistic)
                 <tr>
-                    <th scope="row">{{ $statistic['id']}}</th>
-                    <td>{{ $statistic['title'] }}</td>
-                    <td>{{ $statistic['sub_now'] }}</td>
-                    <td>{{ $statistic['sub_total']}}</td>
-                    <td>{{ $statistic['redirects'] }}</td>
-                    <td>{{ $statistic['redirect_award'] }}</td>
-                    <td>{{ $statistic['costs'] }}</td>
+                    <th scope="row">{{ $statistic->id}}</th>
+                    <td>{{ $statistic->title }}</td>
+                    <td>{{$statistic->subscriptionsNow}}</td>
+                    <td>{{ $statistic->subscriptions_count}}</td>
+                    <td>{{ $statistic->redirectsCount }}</td>
+                    <td>{{ $statistic->award }}</td>
+                    <td>{{ $statistic->redirectsCount * $statistic->award}}</td>
                 </tr>
                 @endforeach
                 <tr>
@@ -42,7 +42,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th scope="row">Σ {{$total}}</th>
+                    <th scope="row">Σ {{$costTotal}}</th>
                 </tr>
             </tbody>
         </table>
@@ -81,7 +81,7 @@
                     <td>{{$dayOffer->id}}</td>
                     <td>{{$dayOffer->title}}</td>
                     <td>{{$dayOffer->subscriptionsNow}}</td>
-                    <td>{{$dayOffer->subscriptionsNow}}</td>
+                    <td>{{$dayOffer->subscriptions_count}}</td>
                     <td>{{$dayOffer->redirectsCount}}</td>
                     <td>{{$dayOffer->award}}</td>
                     <th scope="row">{{$dayOffer->redirectsCount * $dayOffer->award}}</th>
