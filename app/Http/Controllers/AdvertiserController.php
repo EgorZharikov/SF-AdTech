@@ -32,18 +32,24 @@ class AdvertiserController extends Controller
 
     public function statistics(Request $request)
     {   
+        $userDate = $request->date;
         $dayOffers = [];
         $dayCost = 0;
         if($request->has('day')) {
             $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
-                $query->whereDay('created_at', date("d", strtotime(request()->date)));
+                $query->whereDay('created_at', date("d", strtotime(request()->date)))->
+                whereMonth('created_at', date("m", strtotime(request()->date)))->
+                whereYear('created_at', date("Y", strtotime(request()->date)));
             }])->get();
             foreach($offers as $offer) {
                 $dayRedirects = 0;
                 foreach($offer->subscriptions as $subscription) {
-                    $dayRedirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->whereDay('created_at', date("d", strtotime(request()->date)))->get()->count();
+                    $dayRedirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->whereDay('created_at', date("d", strtotime(request()->date)))->
+                whereMonth('created_at', date("m", strtotime(request()->date)))->
+                whereYear('created_at', date("Y", strtotime(request()->date)))->get()->count();
                 }
                 $offer->redirectsCount = $dayRedirects;
+                $offer->subscriptionsNow = $offer->subscriptions->where('deleted_at', null )->count();
                 $dayOffers[] = $offer;
                 $dayCost += $offer->redirectsCount * $offer->award;
                 // $dayRedirects = Redirect::where([['subscription_id', $offer->subscriptions->id],['status', 1]])->get();
@@ -70,7 +76,7 @@ class AdvertiserController extends Controller
             $statistics[] = ['id' => $offer->id, 'title' => $offer->title, 'sub_now' => $offer->subscriptions->where('deleted_at', null)->count(), 'sub_total' => $offer->subscriptions->count(), 'redirects' => $count, 'costs' => $costs, 'redirect_award' => $offer->award];
         }
         
-        return view('dashboard.advertiser.statistics', compact('statistics', 'total', 'dayOffers', 'dayCost'));
+        return view('dashboard.advertiser.statistics', compact('statistics', 'total', 'dayOffers', 'dayCost', 'userDate'));
     }
 
     public function wallet()
