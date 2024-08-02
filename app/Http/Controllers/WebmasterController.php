@@ -8,6 +8,7 @@ use App\Models\Wallet;
 use App\Models\Redirect;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use App\Services\WebmasterService;
 use Illuminate\Support\Facades\Auth;
 
 class WebmasterController extends Controller
@@ -23,23 +24,12 @@ class WebmasterController extends Controller
         return view('dashboard.webmaster.subscriptions', compact('subscriptions'));
     }
 
-    public function statistics()
+    public function statistics(Request $request)
     {
-        $subscriptions = Subscription::where('user_id', Auth::id())->with('redirects')->get();
         $statistics = [];
         $total = 0;
-        foreach ($subscriptions as $subscription) {
-            $income = 0;
-
-            foreach ($subscription->redirects->where('status', 1) as $redirect) {
-                $award = $redirect->subscription->offer->award;
-                $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
-                $fee = $award * ($fee / 100);
-                $income += $award - $fee;
-            }
-            $total += $income;
-            $statistics[] = ['subscription' => $subscription->referal_link, 'redirect_count' => $subscription->redirects->where('status', 1)->count(), 'award' => $income];
-        }
+        $userDate = $request->date;
+        $webmasterService = (new WebmasterService);
         
 
         return view('dashboard.webmaster.statistics', compact('statistics', 'total'));
