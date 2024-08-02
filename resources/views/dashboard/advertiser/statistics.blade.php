@@ -10,8 +10,9 @@
 @section('content')
 
 <div class="container text-center">
+    <h4 class="mb-3 text-primary">Overall:</h4>
     <div class="row align-items-center">
-        <table class="table">
+        <table class="table border">
             <thead>
                 <tr>
                     <th scope="col">id</th>
@@ -42,7 +43,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th scope="row">Σ {{$costTotal}}</th>
+                    <th scope="row">Σ {{$totalCost ?? ''}}</th>
                 </tr>
             </tbody>
         </table>
@@ -50,7 +51,7 @@
 </div>
 <div class="container">
     <div class="row align-items-center d-inline-flex">
-        <div class="justify-content-center d-inline-flexs">
+        <div class="justify-content-center d-inline-flex">
             <form method="post" action="{{ url('/advertiser/statistics') }}">
                 @csrf
                 <input type="date" name="date" value="{{$userDate}}" class="m-4" style="transform: scale(1.3);" />
@@ -61,9 +62,9 @@
         </div>
     </div>
 </div>
-<div class="container">
+<div class="container text-center">
     <div class="row align-items-center">
-        <table class="table">
+        <table class="table border">
             <thead>
                 <tr>
                     <th scope="col">id</th>
@@ -76,15 +77,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($dayOffers as $dayOffer )
+                @foreach ($dateStatistics as $dateStatistic )
                 <tr>
-                    <td>{{$dayOffer->id}}</td>
-                    <td>{{$dayOffer->title}}</td>
-                    <td>{{$dayOffer->subscriptionsNow}}</td>
-                    <td>{{$dayOffer->subscriptions_count}}</td>
-                    <td>{{$dayOffer->redirectsCount}}</td>
-                    <td>{{$dayOffer->award}}</td>
-                    <th scope="row">{{$dayOffer->redirectsCount * $dayOffer->award}}</th>
+                    <th scope="row">{{$dateStatistic->id}}</th>
+                    <td>{{$dateStatistic->title}}</td>
+                    <td>{{$dateStatistic->subscriptionsNow}}</td>
+                    <td>{{$dateStatistic->subscriptions_count}}</td>
+                    <td>{{$dateStatistic->redirectsCount}}</td>
+                    <td>{{$dateStatistic->award}}</td>
+                    <th scope="row">{{$dateStatistic->redirectsCount * $dateStatistic->award}}</th>
                 </tr>
                 @endforeach
                 <tr>
@@ -94,7 +95,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <th scope="row">Σ {{$dayCost}}</th>
+                    <th scope="row">Σ {{$dateCost ?? ''}}</th>
                 </tr>
             </tbody>
         </table>
