@@ -39,7 +39,8 @@
                 </div>
             </div>
         </div>
-        @endforeach
+        @endforeach     
     </div>
+    {{$offers->links()}}
 </div>
 @endsection

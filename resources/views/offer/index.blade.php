@@ -2,6 +2,12 @@
 @section('content')
     <div class="container text-center">
         <div class="row align-items-start">
+            @if ($user->role_id == 1)
+                <div class="mb-3">
+                    <a href="{{ route('offer.create') }}" class="btn btn-primary">Create offer</a>
+                </div>
+                <hr>
+            @endif
             @foreach ($offers as $offer)
                 <div class="col-sm-3 m-3">
                     <div class="card" style="width: 20rem;">
@@ -20,5 +26,6 @@
                 </div>
             @endforeach
         </div>
+        {{ $offers->links() }}
     </div>
 @endsection

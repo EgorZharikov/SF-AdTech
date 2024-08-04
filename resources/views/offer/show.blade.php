@@ -37,7 +37,7 @@
                     @csrf
                     @method('delete')
                     <input type="hidden" name="offer_id" value="{{ $offer->id }}">
-                    <button type=submit" class="btn btn btn-dark btn-lg px-4">Unsubscribe</button>
+                    <button type="submit" class="btn btn btn-dark btn-lg px-4">Unsubscribe</button>
                 </form>
                 @endcan
                 @can('update', $offer)
@@ -47,14 +47,14 @@
                 <form method="post" action="{{ route('offer.unpublish', $offer->id) }}">
                     @csrf
                     @method('patch')
-                    <button type=submit" class="btn btn btn-dark btn-lg px-4 me-3">Unpublish</button>
+                    <button type="submit" class="btn btn btn-dark btn-lg px-4 me-3">Unpublish</button>
                 </form>
                 @endcan
                 @can('publish', $offer)
                 <form method="post" action="{{ route('offer.publish', $offer->id) }}">
                     @csrf
                     @method('patch')
-                    <button type=submit" class="btn btn btn-success btn-lg px-4">Publish</button>
+                    <button type="submit" class="btn btn btn-success btn-lg px-4">Publish</button>
                 </form>
                 @endcan
 

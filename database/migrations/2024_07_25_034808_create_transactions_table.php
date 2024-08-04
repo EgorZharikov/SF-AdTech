@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('wallet_id');
+            $table->integer('operation_code');
             $table->string('action');
             $table->decimal('value');
             $table->string('hash');
             $table->timestamps();
 
             $table->index('wallet_id', 'transaction_wallet_idx');
+            $table->index('operation_code', 'operation_code_idx');
             $table->foreign('wallet_id', 'transaction_wallet_fk')->references('id')->on('wallets')->cascadeOnDelete();
         });
     }

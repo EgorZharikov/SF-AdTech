@@ -32,47 +32,38 @@
                     <div class="row g-3">
                         <div class="col-12">
                             <label for="title" class="form-label">Title:</label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="Offer title" required>
-                            <div class="invalid-feedback">
-                                Please enter offer title.
-                            </div>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ old('title')}}" placeholder="Offer title" required>
+                            <div class="form-text text-danger">@error('title') {{$message}} @enderror</div>
                         </div>
                         <div class="col-12">
                             <label for="url" class="form-label">Link to your website:</label>
-                            <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com" required>
-                            <div class="invalid-feedback">
-                                Link is required.
-                            </div>
+                            <input type="url" class="form-control" value="{{ old('url')}}"  id="url" name="url" placeholder="https://example.com" required>
+                           <div class="form-text text-danger">@error('url') {{$message}} @enderror</div>
                         </div>
                         <div class="col-12">
                             <label for="content" class="form-label">Main content:</label>
-                            <textarea class="form-control" id="content" rows="10" name="content"></textarea>
-                            <div class="invalid-feedback">
-                                Please enter content.
-                            </div>
+                            <textarea class="form-control" value="{{ old('content')}}" id="content" rows="10" name="content"></textarea>
+                        <div class="form-text text-danger">@error('content') {{$message}} @enderror</div>
                         </div>
                         <div class="col-12">
                             <label for="topic" class="form-label">Topic:</label>
-                            <input type="text" class="form-control" id="topic" name="topic" placeholder="Enter topic your website" required>
-                            <div class="invalid-feedback">
-                                Please enter topic.
-                            </div>
+                            <input type="text" class="form-control" value="{{ old('topic')}}" id="topic" name="topic" placeholder="Enter topic your website" required>
+                          <div class="form-text text-danger">@error('topic') {{$message}} @enderror</div>
                         </div>
                         <div class="col-12">
                             <span>Preview image:</span>
                             <div class="input-group mt-2">
                                 <input type="file" class="form-control" id="preview_image" name="preview_image">
                             </div>
+                            <div class="form-text text-danger">@error('preview_image') {{$message}} @enderror</div>
                         </div>
                         <div class="col-md-3 mb-4">
                             <span>Reward:</span>
                             <div class="input-group mt-2">
                                 <span class="input-group-text">₽</span>
-                                <input type="number" class="form-control" aria-label="Amount" name="award" step=".1" pattern="\d*">
+                                <input type="number" class="form-control" value="{{ old('award')}}" aria-label="Amount" name="award" step=".1" pattern="\d*">
                             </div>
-                            <div class="invalid-feedback">
-                                Reward is required.
-                            </div>
+                            <div class="form-text text-danger">@error('award') {{$message}}@enderror</div>
                         </div>
                         <div class="col-12 mb-4">
                             <div class="form-check form-switch" style="display:contents;">

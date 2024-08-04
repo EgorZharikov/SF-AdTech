@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckBanned;
 use App\Http\Middleware\checkWalletBalance;
 use App\Http\Middleware\Dashboard;
 use App\Http\Middleware\IsAdministrator;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'subscribed' => Subscribed::class,
             'checkWalletBalance' => checkWalletBalance::class,
             'dashboard' => Dashboard::class,
+            'checkBanned' => CheckBanned::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

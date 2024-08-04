@@ -27,7 +27,7 @@ class AdvertiserController extends Controller
 
     public function offers()
     {
-        $offers = Offer::where('user_id', Auth::id())->get();
+        $offers = Offer::where('user_id', Auth::id())->paginate(9);
         return view('dashboard.advertiser.offers', compact('offers'));
     }
 

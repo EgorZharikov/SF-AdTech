@@ -45,9 +45,9 @@ class WalletService
             try {
                 DB::beginTransaction();
                 self::debiting($wallet->id, $value);
-                TransactionService::store($wallet->id, 'withdraw', $value, $hash);
+                TransactionService::store($wallet->id, 222, 'withdraw', $value, $hash);
                 self::debiting($systemWallet->id, $value);
-                TransactionService::store($systemWallet->id, 'withdraw_from_wallet_' . $wallet->id, $value, $hash);
+                TransactionService::store($systemWallet->id, 301, 'withdraw_from_wallet_' . $wallet->id, $value, $hash);
 
                 DB::commit();
                 return redirect()->back();
@@ -70,9 +70,9 @@ class WalletService
         try {
             DB::beginTransaction();
             self::replenishment($wallet->id, $value);
-            TransactionService::store($wallet->id, 'replenish', $value, $hash);
+            TransactionService::store($wallet->id, 111, 'replenish', $value, $hash);
             self::replenishment($systemWallet->id, $value);
-            TransactionService::store($systemWallet->id, 'replenish_wallet_' . $wallet->id, $value, $hash);
+            TransactionService::store($systemWallet->id, 303, 'replenish_wallet_' . $wallet->id, $value, $hash);
 
             DB::commit();
 

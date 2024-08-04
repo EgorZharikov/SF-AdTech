@@ -7,24 +7,31 @@
                 <nav class="mt-2"> <!--begin::Sidebar Menu-->
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu"
                         data-accordion="false">
-                        <li class="nav-item"> <a href="{{route('dashboard.webmaster.profile')}}" class="nav-link"> <i
+                        <li class="nav-item"> <a href="{{route('dashboard.administrator.profile')}}" class="nav-link"> <i
                                     class="nav-icon bi bi-person-fill" style="font-size: 1.3rem; color: cornflowerblue;"></i>
                                 <p>Profile</p>
                             </a></li>
-                        <li class="nav-item"> <a href="{{route('dashboard.webmaster.subscriptions')}}" class="nav-link"> <i
-                                    class="nav-icon bi bi-star" style="font-size: 1.3rem; color: cornflowerblue;"></i>
-                                <p>Subscriptions</p>
-                            </a></li>
-                        <li class="nav-item"> <a href="" class="nav-link"> <i
-                                    class="nav-icon bi bi-arrow-left-right"
-                                    style="font-size: 1.3rem; color: cornflowerblue;"></i>
-                                <p>Redirects</p>
-                            </a></li>
-                        <li class="nav-item"> <a href="{{route('dashboard.webmaster.statistics')}}" class="nav-link"> <i
+                            <li class="nav-item"> <a href="" class="nav-link" onclick="event.preventDefault();"> <i class="nav-icon bi bi-people-fill" 
+                            style="font-size: 1.3rem; color: cornflowerblue;"></i>
+                                <p>
+                                    Users
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item"> <a href="{{route('dashboard.administrator.users.create')}}" class="nav-link"> <i class="nav-icon bi bi-person-fill-add"></i>
+                                        <p>Add User</p>
+                                    </a> </li>
+                                    <li class="nav-item"> <a href="{{route('dashboard.administrator.users.index')}}" class="nav-link"> <i class="nav-icon bi bi-person-lines-fill"></i>
+                                        <p>User List</p>
+                                    </a> </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"> <a href="{{route('dashboard.administrator.statistics')}}" class="nav-link"> <i
                                     class="nav-icon bi bi-table" style="font-size: 1.3rem; color: cornflowerblue;"></i>
                                 <p>Statistics</p>
                             </a></li>
-                            <li class="nav-item"> <a href="{{route('dashboard.webmaster.wallet')}}" class="nav-link"> <i
+                            <li class="nav-item"> <a href="{{route('dashboard.administrator.wallet')}}" class="nav-link"> <i
                                     class="nav-icon bi bi-wallet2" style="font-size: 1.3rem; color: cornflowerblue;"></i>
                                 <p>Wallet</p>
                             </a></li>

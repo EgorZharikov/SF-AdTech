@@ -41,5 +41,6 @@
         </div>
         @endforeach
     </div>
+    {{$subscriptions->links()}}
 </div>
 @endsection

@@ -65,11 +65,12 @@ class RedirectService
 
     private function store(array $data, bool $status)
     {
+        $systemWallet1Id = Wallet::where('system_code', 101)->first()->id;
         $systemWallet2Id = Wallet::where('system_code', 102)->first()->id;
-        $offerAward = $this->offer->award;
+        $offerAward = round($this->offer->award, 2);
         $fee = Fee::find($this->webmaster->user->fee_id)->percent;
-        $systemProfit = $offerAward * ($fee / 100);
-        $webmasterProfit = $offerAward - $systemProfit;
+        $systemProfit = round($offerAward * ($fee / 100), 2);
+        $webmasterProfit = round($offerAward - $systemProfit, 2);
         $hash = Str::random(36);
 
         try {
@@ -77,11 +78,13 @@ class RedirectService
 
             if ($status) {
                 WalletService::debiting($this->advertiserWalletId, $offerAward);
-                TransactionService::store($this->advertiserWalletId, 'debiting_offer_award', $offerAward, $hash);
+                TransactionService::store($this->advertiserWalletId, 102, 'debiting_offer_award', $offerAward, $hash);
                 WalletService::replenishment($this->webmasterWalletId, $webmasterProfit);
-                TransactionService::store($this->webmasterWalletId, 'replenishment_offer_award', $webmasterProfit, $hash);
+                TransactionService::store($this->webmasterWalletId, 201, 'replenishment_offer_award', $webmasterProfit, $hash);
+                WalletService::debiting($systemWallet1Id, $systemProfit);
+                TransactionService::store($systemWallet1Id, 301, 'debiting_fee_from_main_system_wallet', $systemProfit, $hash);
                 WalletService::replenishment($systemWallet2Id, $systemProfit);
-                TransactionService::store($systemWallet2Id, 'replenishment_fee', $systemProfit, $hash);
+                TransactionService::store($systemWallet2Id, 302, 'replenishment_fee', $systemProfit, $hash);
             }
             Redirect::create([
                 'subscription_id' => $data['subscription_id'],

@@ -23,7 +23,8 @@ class AdvertiserService
         $this->totalCost = 0;
         $this->statistics = [];
 
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
+        $offers = Offer::where('user_id', Auth::id())->whereDate('created_at', '<=', date("Y-m-d", strtotime(request()->date)))->
+        withCount(['subscriptions' => function (Builder $query) {
             $query->withTrashed();
             $query->whereDay('created_at', date("d", strtotime(request()->date)));
             $query->whereMonth('created_at', date("m", strtotime(request()->date)));
@@ -43,7 +44,7 @@ class AdvertiserService
             whereMonth('created_at', date("m", strtotime(request()->date)))->
             whereYear('created_at', date("Y", strtotime(request()->date)))->count();
             $this->statistics[] = $offer;
-            $this->totalCost += $offer->redirectsCount * $offer->award;
+            $this->totalCost += round($offer->redirectsCount * $offer->award, 2);
         }
         return $this->statistics;
     }
@@ -53,7 +54,10 @@ class AdvertiserService
         $this->totalCost = 0;
         $this->statistics = [];
         
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
+        $offers = Offer::where('user_id', Auth::id())->
+        whereYear('created_at', '<=', date("Y", strtotime(request()->date)))->
+        whereMonth('created_at', '<=', date("m", strtotime(request()->date)))->
+        withCount(['subscriptions' => function (Builder $query) {
             $query->withTrashed();
             $query->whereMonth('created_at', date("m", strtotime(request()->date)));
             $query->whereYear('created_at', date("Y", strtotime(request()->date)));
@@ -70,7 +74,7 @@ class AdvertiserService
             whereMonth('created_at', date("m", strtotime(request()->date)))->
             whereYear('created_at', date("Y", strtotime(request()->date)))->count();
             $this->statistics[] = $offer;
-            $this->totalCost += $offer->redirectsCount * $offer->award;
+            $this->totalCost += round($offer->redirectsCount * $offer->award, 2);
         }
         return $this->statistics;
     }
@@ -80,7 +84,9 @@ class AdvertiserService
         $this->totalCost = 0;
         $this->statistics = [];
 
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
+        $offers = Offer::where('user_id', Auth::id())->
+        whereYear('created_at', '<=', date("Y", strtotime(request()->date)))->
+        withCount(['subscriptions' => function (Builder $query) {
             $query->withTrashed();
             $query->whereYear('created_at', date("Y", strtotime(request()->date)));
         }])->get();
@@ -94,7 +100,7 @@ class AdvertiserService
             $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->
             whereYear('created_at', date("Y", strtotime(request()->date)))->count();
             $this->statistics[] = $offer;
-            $this->totalCost += $offer->redirectsCount * $offer->award;
+            $this->totalCost += round($offer->redirectsCount * $offer->award, 2);
         }
         return $this->statistics;
     }
@@ -113,7 +119,7 @@ class AdvertiserService
                 $redirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->get()->count();
             }
             $offer->redirectsCount = $redirects;
-            $this->totalCost += $offer->redirectsCount * $offer->award;
+            $this->totalCost += round($offer->redirectsCount * $offer->award, 2);
             $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->count();
             $this->statistics[] = $offer;
         }

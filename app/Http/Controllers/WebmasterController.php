@@ -20,19 +20,39 @@ class WebmasterController extends Controller
 
     public function subscriptions()
     {
-        $subscriptions = Subscription::where('user_id', Auth::id())->with('offer')->get();
+        $subscriptions = Subscription::where('user_id', Auth::id())->with('offer')->paginate(9);
         return view('dashboard.webmaster.subscriptions', compact('subscriptions'));
     }
 
     public function statistics(Request $request)
     {
         $statistics = [];
-        $total = 0;
+        $totalAward = 0;
         $userDate = $request->date;
-        $webmasterService = (new WebmasterService);
-        
+        $dateStatistics = [];
+        $dateAward= 0;
 
-        return view('dashboard.webmaster.statistics', compact('statistics', 'total'));
+        $webmasterService = (new WebmasterService);
+
+        $statistics = $webmasterService->statisctics();
+        $totalAward = $webmasterService->totalAward;
+
+        if ($request->has('day')) {
+            $dateStatistics = $webmasterService->dayStatistics();
+            $dateAward = $webmasterService->dateAward;
+        }
+
+        if ($request->has('month')) {
+            $dateStatistics = $webmasterService->monthStatistics();
+            $dateAward = $webmasterService->dateAward;
+        }
+
+        if ($request->has('year')) {
+            $dateStatistics = $webmasterService->yearStatistics();
+            $dateAward = $webmasterService->dateAward;
+        }
+
+        return view('dashboard.webmaster.statistics', compact('statistics', 'totalAward', 'userDate', 'dateStatistics', 'dateAward'));
     }
 
     public function wallet()

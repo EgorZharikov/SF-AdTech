@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Offer;
 use App\Models\Topic;
 use App\Models\Wallet;
@@ -14,7 +15,9 @@ class OfferController extends Controller
 {
     public function index(Offer $offer)
     {
-        return view('offer.index', ['offers' => Offer::with('topic')->where('status' , 1)->get()]);
+        $offers = Offer::with('topic')->where('status', 1)->paginate(9);
+        $user = User::where('id', Auth::id())->first();
+        return view('offer.index', compact('offers', 'user'));
     }
 
     public function create()
@@ -28,11 +31,11 @@ class OfferController extends Controller
 
 
         $data = request()->validate([
-            'title' => '',
-            'url' => '',
-            'award' => '',
-            'content' => '',
-            'topic' => '',
+            'title' => 'required',
+            'url' => ['required', 'url'],
+            'award' => ['required', 'numeric'],
+            'content' => 'required',
+            'topic' => ['required', 'string'],
             'preview_image' => ['required', 'image'],
             'uniqueIp' => '',
         ]);
@@ -74,11 +77,11 @@ class OfferController extends Controller
     public function update(Request $request, Offer $offer)
     {
         $data = request()->validate([
-            'title' => '',
-            'url' => '',
-            'award' => '',
-            'content' => '',
-            'topic' => '',
+            'title' => 'required',
+            'url' => ['required', 'url'],
+            'award' => ['required', 'numeric'],
+            'content' => 'required',
+            'topic' => ['required', 'string'],
             'preview_image' => ['required', 'image'],
             'uniqueIp' => '',
         ]);

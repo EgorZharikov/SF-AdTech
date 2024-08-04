@@ -15,128 +15,111 @@ class WebmasterService
 {
     public $totalAward;
     private $statistics;
+    public $dateAward;
+    private $dateStatistics;
 
 
 
     public function dayStatistics(): array
     {
+        $this->dateAward = 0;
+        $this->dateStatistics = [];
 
-        $this->totalAward = 0;
-        $this->statistics = [];
+        $subscriptions = Subscription::where('user_id', Auth::id())->
+        whereDate('created_at', '<=', date("Y-m-d", strtotime(request()->date)))->
+        withCount(['redirects' => function (Builder $query) {
+            $query->where('status', 1);
+            $query->whereDate('created_at', date("Y-m-d", strtotime(request()->date)));
+        }])->withTrashed()->get();
 
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
-            $query->withTrashed();
-            $query->whereDay('created_at', date("d", strtotime(request()->date)));
-            $query->whereMonth('created_at', date("m", strtotime(request()->date)));
-            $query->whereYear('created_at', date("Y", strtotime(request()->date)));
-        }])->get();
-        foreach ($offers as $offer) {
-            $dayRedirects = 0;
-            foreach ($offer->subscriptions()->withTrashed()->get() as $subscription) {
-                $dayRedirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->
-                whereDay('created_at', date("d", strtotime(request()->date)))->
-                whereMonth('created_at', date("m", strtotime(request()->date)))->
-                whereYear('created_at', date("Y", strtotime(request()->date)))->count();
+        foreach ($subscriptions as $subscription) {
+
+            foreach ($subscription->redirects as $redirect) {
+                $subscription->award = round(Offer::where('id', $subscription->offer_id)->first()->award, 2);
+                $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
+                $subscription->fee = round($subscription->award * ($fee / 100), 2);
             }
-            $offer->redirectsCount = $dayRedirects;
-            $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->
-            whereDay('created_at', date("d", strtotime(request()->date)))->
-            whereMonth('created_at', date("m", strtotime(request()->date)))->
-            whereYear('created_at', date("Y", strtotime(request()->date)))->count();
-            $this->statistics[] = $offer;
-            $this->totalAward += $offer->redirectsCount * $offer->award;
+            $this->dateAward += round($subscription->redirects_count * ($subscription->award - $subscription->fee), 2);
+            $this->dateStatistics[] = $subscription;
         }
-        return $this->statistics;
+
+        return $this->dateStatistics;
     }
 
     public function monthStatistics(): array
     {
-        $this->totalAward = 0;
-        $this->statistics = [];
-        
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
-            $query->withTrashed();
-            $query->whereMonth('created_at', date("m", strtotime(request()->date)));
-            $query->whereYear('created_at', date("Y", strtotime(request()->date)));
-        }])->get();
-        foreach ($offers as $offer) {
-            $monthRedirects = 0;
-            foreach ($offer->subscriptions()->withTrashed()->get() as $subscription) {
-                $monthRedirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->
-                whereMonth('created_at', date("m", strtotime(request()->date)))->
-                whereYear('created_at', date("Y", strtotime(request()->date)))->count();
+        $this->dateAward = 0;
+        $this->dateStatistics = [];
+
+        $subscriptions = Subscription::where('user_id', Auth::id())->
+        whereYear('created_at', '<=', date("Y", strtotime(request()->date)))->
+        whereMonth('created_at', '<=', date("m", strtotime(request()->date)))->
+        withCount(['redirects' => function (Builder $query) {
+                $query->where('status', 1);
+                $query->whereYear('created_at', date("Y", strtotime(request()->date)));
+                $query->whereMonth('created_at', date("m", strtotime(request()->date)));
+            }])->withTrashed()->get();
+
+        foreach ($subscriptions as $subscription) {
+
+            foreach ($subscription->redirects as $redirect) {
+                $subscription->award = round(Offer::where('id', $subscription->offer_id)->first()->award, 2);
+                $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
+                $subscription->fee = round($subscription->award * ($fee / 100), 2);
             }
-            $offer->redirectsCount = $monthRedirects;
-            $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->
-            whereMonth('created_at', date("m", strtotime(request()->date)))->
-            whereYear('created_at', date("Y", strtotime(request()->date)))->count();
-            $this->statistics[] = $offer;
-            $this->totalAward += $offer->redirectsCount * $offer->award;
+            $this->dateAward += round($subscription->redirects_count * ($subscription->award - $subscription->fee), 2);
+            $this->dateStatistics[] = $subscription;
         }
-        return $this->statistics;
+
+        return $this->dateStatistics;
     }
 
     public function yearStatistics(): array
     {
-        $this->totalAward = 0;
-        $this->statistics = [];
+        $this->dateAward = 0;
+        $this->dateStatistics = [];
 
-        $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
-            $query->withTrashed();
-            $query->whereYear('created_at', date("Y", strtotime(request()->date)));
-        }])->get();
-        foreach ($offers as $offer) {
-            $yearRedirects = 0;
-            foreach ($offer->subscriptions()->withTrashed()->get() as $subscription) {
-                $yearRedirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->
-                whereYear('created_at', date("Y", strtotime(request()->date)))->count();
+        $subscriptions = Subscription::where('user_id', Auth::id())->
+        whereYear('created_at', '<=', date("Y", strtotime(request()->date)))->
+        withCount(['redirects' => function (Builder $query) {
+                $query->where('status', 1);
+                $query->whereYear('created_at', date("Y", strtotime(request()->date)));
+            }])->withTrashed()->get();
+
+        foreach ($subscriptions as $subscription) {
+
+            foreach ($subscription->redirects as $redirect) {
+                $subscription->award = round(Offer::where('id', $subscription->offer_id)->first()->award, 2);
+                $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
+                $subscription->fee = round($subscription->award * ($fee / 100), 2);
             }
-            $offer->redirectsCount = $yearRedirects;
-            $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->
-            whereYear('created_at', date("Y", strtotime(request()->date)))->count();
-            $this->statistics[] = $offer;
-            $this->totalAward += $offer->redirectsCount * $offer->award;
+            $this->dateAward += round($subscription->redirects_count * ($subscription->award - $subscription->fee), 2);
+            $this->dateStatistics[] = $subscription;
         }
-        return $this->statistics;
+
+        return $this->dateStatistics;
     }
 
     public function statisctics() {
-
-        // $this->totalAward = 0;
-        // $this->statistics = [];
-
-        // $offers = Offer::where('user_id', Auth::id())->withCount(['subscriptions' => function (Builder $query) {
-        //         $query->withTrashed();
-        //     }])->get();
-        // foreach ($offers as $offer) {
-        //     $redirects = 0;
-        //     foreach ($offer->subscriptions()->withTrashed()->get() as $subscription) {
-        //         $redirects = Redirect::where('subscription_id', $subscription->id)->where('status', 1)->get()->count();
-        //     }
-        //     $offer->redirectsCount = $redirects;
-        //     $this->totalAward += $offer->redirectsCount * $offer->award;
-        //     $offer->subscriptionsNow = Subscription::where('offer_id', $offer->id)->count();
-        //     $this->statistics[] = $offer;
-        // }
-        // return $this->statistics;
+        $this->totalAward = 0;
+        $this->statistics = [];
 
         $subscriptions = Subscription::where('user_id', Auth::id())->withCount(['redirects' => function (Builder $query) {
         $query->where('status', 1);
         }])->withTrashed()->get();
-        $this->totalAward = 0;
-        $this->statistics = [];
+
         foreach ($subscriptions as $subscription) {
-            $income = 0;
 
             foreach ($subscription->redirects as $redirect) {
-                $subscription->award = $redirect->subscription->offer->award;
+                $subscription->award = round(Offer::where('id', $subscription->offer_id)->first()->award, 2);
                 $fee = Fee::where('id', $redirect->fee_id)->first()->percent;
-                $subscription->fee = $subscription->award * ($fee / 100);
-                $income += $subscription->award - $fee;
+                $subscription->fee = round($subscription->award * ($fee / 100), 2);
             }
-            $this->totalAward += $income;
+            $this->totalAward += round($subscription->redirects_count * ($subscription->award - $subscription->fee),2);
             $this->statistics[] = $subscription;
-            return $this->statistics;
+
         }
+        
+        return $this->statistics;
     }
 }
